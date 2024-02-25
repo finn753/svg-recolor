@@ -7,6 +7,29 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
+export async function replaceAllColors(files: File[], color: string): Promise<File[]> {
+    const updatedFiles: File[] = [];
+
+    for (const file of files) {
+        const text = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = () => reject(new Error('Error reading file'));
+            reader.readAsText(file);
+        });
+
+        const updatedText = text.replace(/#[0-9a-fA-F]{6}/g, color); // replace hex color codes
+        const updatedFile = new File([updatedText], file.name, {
+            type: file.type,
+            lastModified: Date.now(),
+        });
+
+        updatedFiles.push(updatedFile);
+    }
+
+    return updatedFiles;
+}
+
 type FlyAndScaleParams = {
     y?: number;
     x?: number;
