@@ -8,6 +8,8 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
+
+	declare module "file-saver"
 }
 
 export {};
