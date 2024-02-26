@@ -2,12 +2,16 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { cubicOut } from "svelte/easing";
 import type { TransitionConfig } from "svelte/transition";
+import { TinyColor } from '@ctrl/tinycolor';
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
 export async function replaceAllColors(files: File[], color: string): Promise<File[]> {
+    let hex = new TinyColor(color).toHexString();
+    let rgb = new TinyColor(color).toRgb();
+
     const updatedFiles: File[] = [];
 
     for (const file of files) {
@@ -18,7 +22,9 @@ export async function replaceAllColors(files: File[], color: string): Promise<Fi
             reader.readAsText(file);
         });
 
-        const updatedText = text.replace(/#[0-9a-fA-F]{6}/g, color); // replace hex color codes
+        let updatedText = text.replace(/#[0-9a-fA-F]{6}/g, hex); // replace hex color codes
+        updatedText = updatedText.replace(/rgb\(\d{1,3},\s?\d{1,3},\s?\d{1,3}\)/g, `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`); // replace rgb color codes
+
         const updatedFile = new File([updatedText], file.name, {
             type: file.type,
             lastModified: Date.now(),

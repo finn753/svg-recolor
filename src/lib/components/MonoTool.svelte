@@ -1,7 +1,7 @@
 <script lang="ts">
     import {cn, replaceAllColors} from "$lib/utils";
     import ColorPicker, {ChromeVariant} from "svelte-awesome-color-picker";
-    import {editedFiles} from "$lib/store";
+    import {editedFiles, originalFiles} from "$lib/store";
     import {Button} from "$lib/components/ui/button";
 
     let className: string | undefined | null;
@@ -10,7 +10,7 @@
     let hex: string = "#ff0000";
 
     async function handleColorChange(color: string) {
-        editedFiles.set(await replaceAllColors($editedFiles, color));
+        editedFiles.set(await replaceAllColors($originalFiles, color));
     }
 </script>
 
